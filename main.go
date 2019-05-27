@@ -377,13 +377,54 @@ func ProcessIPv4(v6Packet gopacket.Packet) {
 		switch Layer.LayerType() {
 		case layers.LayerTypeIPv4:
 			thisLayer := make(map[string]interface{})
-			IPv6Layer := Layer.(*layers.IPv4)
+			IPv4Layer := Layer.(*layers.IPv4)
 			thisLayer["LayerNum"] = LayerNum
 			thisLayer["Type"] = Layer.LayerType()
-			thisLayer["Version"] = IPv6Layer.Version
-			thisLayer["SrcIP"] = IPv6Layer.SrcIP.String()
-			thisLayer["DstIP"] = IPv6Layer.DstIP.String()
-			thisLayer["TTL"] = IPv6Layer.TTL
+			thisLayer["Version"] = IPv4Layer.Version
+			thisLayer["IHL"] = IPv4Layer.IHL
+			thisLayer["TOS"] = IPv4Layer.TOS
+			thisLayer["Length"] = IPv4Layer.Length
+			thisLayer["Id"] = IPv4Layer.Id
+			thisLayer["Flags"] = IPv4Layer.Flags.String()
+			thisLayer["FragOffset"] = IPv4Layer.FragOffset
+			thisLayer["TTL"] = IPv4Layer.TTL
+			thisLayer["Checksum"] = IPv4Layer.Checksum
+			thisLayer["SrcIP"] = IPv4Layer.SrcIP.String()
+			thisLayer["DstIP"] = IPv4Layer.DstIP.String()
+			thisLayer["DstIP"] = IPv4Layer.Options
+			thisLayer["Padding"] = IPv4Layer.Padding
+			ParsedLayers = append(ParsedLayers, thisLayer)
+		case layers.LayerTypeICMPv4:
+			thisLayer := make(map[string]interface{})
+			ICMPv4Layer := Layer.(*layers.ICMPv4)
+			thisLayer["LayerNum"] = LayerNum
+			thisLayer["Type"] = Layer.LayerType()
+			thisLayer["Checksum"] = ICMPv4Layer.Checksum
+			thisLayer["Id"] = ICMPv4Layer.Id
+			thisLayer["Seq"] = ICMPv4Layer.Seq
+			thisLayer["Type"] = ICMPv4Layer.TypeCode.Type()
+			thisLayer["Code"] = ICMPv4Layer.TypeCode.Code()
+			ParsedLayers = append(ParsedLayers, thisLayer)
+		case layers.LayerTypeDHCPv4:
+			thisLayer := make(map[string]interface{})
+			DHCPv4Layer := Layer.(*layers.DHCPv4)
+			thisLayer["LayerNum"] = LayerNum
+			thisLayer["Type"] = Layer.LayerType()
+			thisLayer["YourClientIP"] = DHCPv4Layer.YourClientIP.String()
+			thisLayer["Xid"] = DHCPv4Layer.Xid
+			thisLayer["ServerName"] = DHCPv4Layer.ServerName
+			thisLayer["Secs"] = DHCPv4Layer.Secs
+			thisLayer["RelayAgentIP"] = DHCPv4Layer.RelayAgentIP.String()
+			thisLayer["NextServerIP"] = DHCPv4Layer.NextServerIP.String()
+			thisLayer["Operation"] = DHCPv4Layer.Operation.String()
+			thisLayer["HardwareType"] = DHCPv4Layer.HardwareType.String()
+			thisLayer["HardwareOpts"] = DHCPv4Layer.HardwareOpts
+			thisLayer["HardwareLen"] = DHCPv4Layer.HardwareLen
+			thisLayer["File"] = DHCPv4Layer.File
+			thisLayer["ClientIP"] = DHCPv4Layer.ClientIP.String()
+			thisLayer["ClientHWAddr"] = DHCPv4Layer.ClientHWAddr.String()
+			thisLayer["Flags"] = DHCPv4Layer.Flags
+			thisLayer["Options"] = DHCPv4Layer.Options.String()
 			ParsedLayers = append(ParsedLayers, thisLayer)
 		case layers.LayerTypeUDP:
 			thisLayer := make(map[string]interface{})
